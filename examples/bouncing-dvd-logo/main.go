@@ -1,3 +1,6 @@
+// This example renders a bouncing DVD logo. It loads an embedded image,
+// updates its position every frame and changes its color whenever it hits the
+// edge of the screen.
 package main
 
 import (
@@ -11,10 +14,6 @@ import (
 type Vec2 struct {
 	X float64
 	Y float64
-}
-
-func randomColor() color.RGBA {
-	return color.RGBA{uint8(rand.Uint32()), uint8(rand.Uint32()), uint8(rand.Uint32()), 255}
 }
 
 //go:embed resources/*
@@ -60,4 +59,12 @@ func main() {
 	}
 
 	fl.SetAnimationLoop(animate)
+}
+
+func randUint8() uint8 {
+	return uint8(rand.Uint32())
+}
+
+func randomColor() color.RGBA {
+	return color.RGBA{randUint8(), randUint8(), randUint8(), 255}
 }

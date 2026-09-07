@@ -91,6 +91,10 @@ func SetTintColor(r, g, b, a uint8) {
 }
 
 // Sets the matrix to transform all following instances by.
+//
+//	⎡ a  c  e ⎤
+//	⎢ b  d  f ⎥
+//	⎣ 0  0  1 ⎦
 func SetTransform(a, b, c, d, e, f float64) {
 	state.TransformMatrix[0][0] = float32(a)
 	state.TransformMatrix[0][1] = float32(b)
