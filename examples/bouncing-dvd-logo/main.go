@@ -1,6 +1,6 @@
 // This example renders a bouncing DVD logo. It loads an embedded image,
-// updates its position every frame and changes its color whenever it hits the
-// edge of the screen.
+// updates its position every frame and changes its color whenever it
+// hits the edge of the screen.
 package main
 
 import (

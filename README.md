@@ -34,8 +34,8 @@ You can also try it immediately in GitHub Codespaces:
 
 ```go
 // This example renders a bouncing DVD logo. It loads an embedded image,
-// updates its position every frame and changes its color whenever it hits the
-// edge of the screen.
+// updates its position every frame and changes its color whenever it
+// hits the edge of the screen.
 package main
 
 import (
@@ -105,6 +105,28 @@ func randomColor() color.RGBA {
 }
 ```
 
+## Debugging with Chrome DevTools
+
+TinyGo embeds DWARF debug information in WebAssembly (WASM) files during compilation. With the [C/C++ DevTools Support extension](https://chromewebstore.google.com/detail/cc++-devtools-support-dwa/pdcpmagijalfljmkmjngeonclgbbannb) for Chrome, you can use Chrome DevTools to set breakpoints, step through Go code, and view readable stack traces.
+
+### Setup
+
+1. Install the [C/C++ DevTools Support extension](https://chromewebstore.google.com/detail/cc++-devtools-support-dwa/pdcpmagijalfljmkmjngeonclgbbannb).
+2. Restart Chrome.
+3. Open the extension's [options page](chrome-extension://pdcpmagijalfljmkmjngeonclgbbannb/ExtensionOptions.html).
+4. Under path substitutions, configure the following mappings:
+
+   | Instead of  | Substitute with                                                                        |
+   | ----------- | -------------------------------------------------------------------------------------- |
+   | `/old/path` | `/workspaces/flatland-template`                                                        |
+   | `/new/path` | `http://localhost:5173/@fs` or `https://<github-codespace-id>-5173.app.github.dev/@fs` |
+
+### Limitations
+
+DWARF debug information is not included in production builds, so source-level debugging with this extension is only available when running the development server.
+
+According to the [TinyGo documentation](https://tinygo.org/docs/reference/usage/misc-options/), debug symbol support currently covers line numbers only. Single-stepping and stack traces are supported, but inspecting variables is not.
+
 ## Features
 
 - 2D rendering with WebGL
@@ -120,14 +142,14 @@ func randomColor() color.RGBA {
 
 ## API overview
 
-| Category  | Functions                                                                                                                                                                                                                                                                                                                                                        |
-| --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Category  | Functions                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Rendering | [DrawRectangle](https://pkg.go.dev/github.com/bernhardfritz/flatland#DrawRectangle), [DrawTexture2f](https://pkg.go.dev/github.com/bernhardfritz/flatland#DrawTexture2f), [DrawTexture4f](https://pkg.go.dev/github.com/bernhardfritz/flatland#DrawTexture4f), [DrawTexture8f](https://pkg.go.dev/github.com/bernhardfritz/flatland#DrawTexture8f), [DrawText](https://pkg.go.dev/github.com/bernhardfritz/flatland#DrawText) |
-| Animation | [SetAnimationLoop](https://pkg.go.dev/github.com/bernhardfritz/flatland#SetAnimationLoop), `DeltaTime`                                                                                                                                                                                                                                                           |
-| Input     | [IsKeyPressed](https://pkg.go.dev/github.com/bernhardfritz/flatland#IsKeyPressed), [IsMouseButtonPressed](https://pkg.go.dev/github.com/bernhardfritz/flatland#IsMouseButtonPressed), `MouseX`, `MouseY`                                                                                                                                                         |
-| Graphics  | [ClearBackground](https://pkg.go.dev/github.com/bernhardfritz/flatland#ClearBackground), [SetTintColor](https://pkg.go.dev/github.com/bernhardfritz/flatland#SetTintColor), [SetTransform](https://pkg.go.dev/github.com/bernhardfritz/flatland#SetTransform)                                                                                                    |
-| Assets    | [LoadTexture](https://pkg.go.dev/github.com/bernhardfritz/flatland#LoadTexture), [LoadFont](https://pkg.go.dev/github.com/bernhardfritz/flatland#LoadFont), [AddFileSystem](https://pkg.go.dev/github.com/bernhardfritz/flatland#AddFileSystem)                                                                                                                                                                                    |
-| Canvas    | `Width`, `Height`                                                                                                                                                                                                                                                                                                                                                |
+| Animation | [SetAnimationLoop](https://pkg.go.dev/github.com/bernhardfritz/flatland#SetAnimationLoop), `DeltaTime`                                                                                                                                                                                                                                                                                                                        |
+| Input     | [IsKeyPressed](https://pkg.go.dev/github.com/bernhardfritz/flatland#IsKeyPressed), [IsMouseButtonPressed](https://pkg.go.dev/github.com/bernhardfritz/flatland#IsMouseButtonPressed), `MouseX`, `MouseY`                                                                                                                                                                                                                      |
+| Graphics  | [ClearBackground](https://pkg.go.dev/github.com/bernhardfritz/flatland#ClearBackground), [SetTintColor](https://pkg.go.dev/github.com/bernhardfritz/flatland#SetTintColor), [SetTransform](https://pkg.go.dev/github.com/bernhardfritz/flatland#SetTransform)                                                                                                                                                                 |
+| Assets    | [LoadTexture](https://pkg.go.dev/github.com/bernhardfritz/flatland#LoadTexture), [LoadFont](https://pkg.go.dev/github.com/bernhardfritz/flatland#LoadFont), [AddFileSystem](https://pkg.go.dev/github.com/bernhardfritz/flatland#AddFileSystem)                                                                                                                                                                               |
+| Canvas    | `Width`, `Height`                                                                                                                                                                                                                                                                                                                                                                                                             |
 
 ## License
 

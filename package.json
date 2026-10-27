@@ -1,6 +1,6 @@
 {
   "name": "@bernhardfritz/flatland",
-  "description": "A simple 2D graphics library",
+  "description": "A minimal 2D graphics library for Go that runs in the browser using WebAssembly and WebGL",
   "keywords": [
     "2d",
     "go",
