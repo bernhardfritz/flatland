@@ -62,9 +62,9 @@ export async function bootstrap(context: Context, moduleObject: WebAssembly.Modu
       const id = imageBitmapItems.push(imageBitmapItem) - 2; // subtract 2 because first bitmap is 1x1 white pixel
       const bytes = mem.subarray(bytesPtr, bytesPtr + bytesLen)
       const bytesView = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
-      bytesView.setUint32(0, id, true);
-      bytesView.setUint32(4, imageBitmapItem.width, true);
-      bytesView.setUint32(8, imageBitmapItem.height, true);
+      bytesView.setInt32(0, id);
+      bytesView.setFloat64(4, imageBitmapItem.width);
+      bytesView.setFloat64(12, imageBitmapItem.height);
     },
     'loadFont': function(fontPtr: number, fontLen: number, bytesPtr: number, bytesLen: number) {
       const mem = new Uint8Array((wasm.exports.memory as WebAssembly.Memory).buffer);
@@ -101,9 +101,9 @@ export async function bootstrap(context: Context, moduleObject: WebAssembly.Modu
       const id = imageBitmapItems.push(imageBitmapItem) - 2; // subtract 2 because first bitmap is 1x1 white pixel
       const bytes = mem.subarray(bytesPtr, bytesPtr + bytesLen)
       const bytesView = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
-      bytesView.setUint32(0, id, true);
-      bytesView.setUint32(4, imageBitmapItem.width, true);
-      bytesView.setUint32(8, imageBitmapItem.height, true);
+      bytesView.setInt32(0, id);
+      bytesView.setFloat64(4, imageBitmapItem.width);
+      bytesView.setFloat64(12, imageBitmapItem.height);
     }
     // ... other functions
   };

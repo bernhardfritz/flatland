@@ -2,6 +2,8 @@
 package flatland
 
 import (
+	"bytes"
+	"encoding/binary"
 	"io"
 	"io/fs"
 	"unsafe"
@@ -27,27 +29,48 @@ var MouseY float64
 
 // Texture, tex data stored in GPU memory (VRAM)
 type Texture struct {
-	id     int
+	id     int32
 	Width  float64
 	Height float64
 }
 
-func textureFromBytes(bytes []byte) Texture {
-	id := int(littleEndianToUint32(bytes[0:4]))
-	width := float64(littleEndianToUint32(bytes[4:8]))
-	height := float64(littleEndianToUint32(bytes[8:12]))
-	if width > state.MaxTextureWidth {
-		state.MaxTextureWidth = width
-	}
-	if height > state.MaxTextureHeight {
-		state.MaxTextureHeight = height
+type textureWrapper struct {
+	texture Texture
+}
+
+func (wrapper *textureWrapper) UnmarshalBinary(data []byte) error {
+	buf := bytes.NewReader(data)
+
+	// read id
+	if err := binary.Read(buf, binary.BigEndian, &wrapper.texture.id); err != nil {
+		return err
 	}
 
-	return Texture{
-		id:     id,
-		Width:  width,
-		Height: height,
+	// read Width
+	if err := binary.Read(buf, binary.BigEndian, &wrapper.texture.Width); err != nil {
+		return err
 	}
+
+	// read Height
+	if err := binary.Read(buf, binary.BigEndian, &wrapper.texture.Height); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func textureFromBytes(bytes []byte) Texture {
+	// var texture Texture
+	// binary.Decode(bytes, binary.BigEndian, &texture)
+	// The code above cannot be used to decode structs such as "Texture" with unexported fields such as "id"
+	// An unexported wrapper struct "textureWrapper" which implements the BinaryUnmarshaler interface is used instead to avoid having to export the "id" field
+	wrapper := textureWrapper{}
+	err := wrapper.UnmarshalBinary(bytes)
+	if err != nil {
+		panic(err)
+	}
+
+	return wrapper.texture
 }
 
 // Draws a texture onto the canvas where dx and dy specify the coordinates of the top-left corner.
@@ -133,16 +156,19 @@ func AddFileSystem(efs fs.FS) {
 //export loadTexture
 func loadTexture(fileName string, bytes []byte)
 
-func littleEndianToUint32(bytes []byte) uint32 {
-	return *(*uint32)(unsafe.Pointer(&bytes[0]))
-}
-
 // LoadTexture - Load texture from file into GPU memory (VRAM)
 func LoadTexture(fileName string) Texture {
-	var bytes [12]byte
+	var bytes [4 + 8 + 8]byte
 	loadTexture(fileName, bytes[:])
+	texture := textureFromBytes(bytes[:])
+	if texture.Width > state.MaxTextureWidth {
+		state.MaxTextureWidth = texture.Width
+	}
+	if texture.Height > state.MaxTextureHeight {
+		state.MaxTextureHeight = texture.Height
+	}
 
-	return textureFromBytes(bytes[:])
+	return texture
 }
 
 // Font, struct literals can be created with [LoadFont] and passed to [DrawText]
@@ -157,9 +183,15 @@ func loadFont(font string, bytes []byte)
 
 // LoadFont - Load monospaced font from a CSS font string into GPU memory (VRAM)
 func LoadFont(cssFont string) Font {
-	var bytes [12]byte
+	var bytes [4 + 8 + 8]byte
 	loadFont(cssFont, bytes[:])
 	texture := textureFromBytes(bytes[:])
+	if texture.Width > state.MaxTextureWidth {
+		state.MaxTextureWidth = texture.Width
+	}
+	if texture.Height > state.MaxTextureHeight {
+		state.MaxTextureHeight = texture.Height
+	}
 
 	return Font{
 		texture:        texture,
