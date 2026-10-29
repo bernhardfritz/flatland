@@ -133,7 +133,7 @@ According to the [TinyGo documentation](https://tinygo.org/docs/reference/usage/
 - Go → WebAssembly
 - Textures and texture regions
 - Filled rectangles
-- Monospaced text rendering
+- Text rendering
 - 2D transformations
 - Keyboard and mouse input
 - Frame-based animation with delta time
