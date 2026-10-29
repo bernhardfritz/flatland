@@ -5,14 +5,14 @@ import (
 )
 
 func main() {
-	whiteRabbitFont := fl.LoadFont("32px White Rabbit")
+	pixelSquareFont := fl.LoadFont("20px Pixel Square")
 
 	animate := func() {
 		fl.ClearBackground(0, 0, 0, 255)
 		fl.SetTintColor(0, 255, 0, 255)
-		fl.DrawText(whiteRabbitFont, "Wake up Neo.", 50, 50)
-		fl.DrawText(whiteRabbitFont, "The Matrix has you.", 50, 100)
-		fl.DrawText(whiteRabbitFont, "Follow the White Rabbit.", 50, 150)
+		fl.DrawText(pixelSquareFont, "Wake up Neo.", 15, 30)
+		fl.DrawText(pixelSquareFont, "The Matrix has you.", 15, 60)
+		fl.DrawText(pixelSquareFont, "Follow the White Rabbit.", 15, 90)
 	}
 
 	fl.SetAnimationLoop(animate)
