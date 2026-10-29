@@ -1,5 +1,5 @@
 import './style.css';
-import './WhiteRabbit.css';
+import './pixel-square.css';
 import { flatland } from '@bernhardfritz/flatland';
 import wasm from '../main.go';
 

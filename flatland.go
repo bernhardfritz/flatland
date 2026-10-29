@@ -171,19 +171,28 @@ func LoadTexture(fileName string) Texture {
 	return texture
 }
 
+type character struct {
+	X       float64
+	Y       float64
+	Width   float64
+	Height  float64
+	OriginX float64
+	OriginY float64
+	Advance float64
+}
+
 // Font, struct literals can be created with [LoadFont] and passed to [DrawText]
 type Font struct {
-	texture        Texture
-	size           float64
-	monospaceWidth float64
+	texture    Texture
+	characters [95]character
 }
 
 //export loadFont
 func loadFont(font string, bytes []byte)
 
-// LoadFont - Load monospaced font from a CSS font string into GPU memory (VRAM)
+// LoadFont - Load font from a CSS font string into GPU memory (VRAM)
 func LoadFont(cssFont string) Font {
-	var bytes [4 + 8 + 8]byte
+	var bytes [4 + 8 + 8 + 95*56]byte
 	loadFont(cssFont, bytes[:])
 	texture := textureFromBytes(bytes[:])
 	if texture.Width > state.MaxTextureWidth {
@@ -193,17 +202,24 @@ func LoadFont(cssFont string) Font {
 		state.MaxTextureHeight = texture.Height
 	}
 
-	return Font{
-		texture:        texture,
-		size:           (texture.Height - 7) / 6,
-		monospaceWidth: float64(texture.Width-17) / 16,
+	font := Font{
+		texture: texture,
 	}
+
+	_, err := binary.Decode(bytes[4+8+8:], binary.BigEndian, &font.characters)
+	if err != nil {
+		panic(err)
+	}
+
+	return font
 }
 
-// Draws color-filled monospaced text
+// Draws color-filled text
 func DrawText(font Font, text string, x, y float64) {
-	for pos, char := range text {
-		DrawTexture8f(font.texture, x+float64(pos)*font.monospaceWidth, y, font.monospaceWidth, font.size, 1+float64((char-' ')%16)*(font.monospaceWidth+1), 1+float64((char-' ')/16)*float64(font.size+1), font.monospaceWidth, float64(font.size))
+	for _, char := range text {
+		c := font.characters[(char-' ')%95]
+		DrawTexture8f(font.texture, x-c.OriginX, y-c.OriginY, c.Width, c.Height, c.X, c.Y, c.Width, c.Height)
+		x += c.Advance
 	}
 }
 
