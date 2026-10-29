@@ -1,3 +1,4 @@
+import { generate } from './font-texture-generator.ts';
 import { renderer, sizeof, sizes, type AugmentedWebGL2RenderingContext } from './renderer.ts';
 
 const DEFAULT_FONT_SIZE = 32;
@@ -71,28 +72,15 @@ export async function bootstrap(context: Context, moduleObject: WebAssembly.Modu
       let font = new TextDecoder().decode(mem.subarray(fontPtr, fontPtr + fontLen));
       let fontSize;
       const regexMatch = font.match(/(\d+)px (.+)/);
-        if (regexMatch) {
-          fontSize = +regexMatch[1]; 
-        } else {
-          font = DEFAULT_FONT;
-          fontSize = DEFAULT_FONT_SIZE;
-        }
-      const ctx = context.fontCanvas.getContext('2d')!;
-      ctx.font = font;
-      const monospaceWidth = ctx.measureText('a').width;
-      const rows = 6;
-      const columns = 16;
-      const gap = 1;
-      context.fontCanvas.width = Math.ceil(gap + (monospaceWidth + gap) * columns);
-      context.fontCanvas.height = Math.ceil(gap + (fontSize + gap) * rows);
-      ctx.reset();
-      ctx.font = font;
-      ctx.fillStyle = 'white';
-      for (let row = 0; row < rows; row++) {
-        for (let col = 0; col < columns; col++) {
-          ctx.fillText(String.fromCharCode(32 + row * columns + col), gap + col * (ctx.measureText('a').width + gap), gap + fontSize + row * (gap + fontSize) - ctx.measureText(String.fromCharCode(...Array.from({ length: 95 }, (_, i) => 32 + i))).actualBoundingBoxDescent + 1);
-        }
+      if (regexMatch) {
+        fontSize = +regexMatch[1]; 
+      } else {
+        font = DEFAULT_FONT;
+        fontSize = DEFAULT_FONT_SIZE;
       }
+      const ctx = context.fontCanvas.getContext('2d', { willReadFrequently: true })!;
+      ctx.reset();
+      const characters = generate(context.fontCanvas, ctx, font, fontSize); // this line needs to be before createImageBitmap because of side effects
       const imageBitmapItem: ImageBitmapItem = { 
         data: createImageBitmap(context.fontCanvas),
         width: context.fontCanvas.width,
@@ -104,7 +92,18 @@ export async function bootstrap(context: Context, moduleObject: WebAssembly.Modu
       bytesView.setInt32(0, id);
       bytesView.setFloat64(4, imageBitmapItem.width);
       bytesView.setFloat64(12, imageBitmapItem.height);
-    }
+      let byteOffset = 4 + 8 + 8;
+      for (const character of characters) {
+        bytesView.setFloat64(byteOffset + 0, character.x);
+        bytesView.setFloat64(byteOffset + 8, character.y);
+        bytesView.setFloat64(byteOffset + 16, character.width);
+        bytesView.setFloat64(byteOffset + 24, character.height);
+        bytesView.setFloat64(byteOffset + 32, character.originX);
+        bytesView.setFloat64(byteOffset + 40, character.originY);
+        bytesView.setFloat64(byteOffset + 48, character.advance);
+        byteOffset += 56;
+      }
+    },
     // ... other functions
   };
   

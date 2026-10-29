@@ -77,10 +77,10 @@ func main() {
 		fl.SetTintColor(0, 0, 0, 255)
 		fl.DrawRectangle(0, 0, fl.Width, 40)
 		fl.SetTintColor(0, 228, 48, 255)
-		fl.DrawText(font, fmt.Sprintf("bunnies: %d", len(bunnies)), 120, 10)
+		fl.DrawText(font, fmt.Sprintf("bunnies: %d", len(bunnies)), 120, 27.5)
 		fl.SetTintColor(190, 33, 55, 255)
-		fl.DrawText(font, fmt.Sprintf("batched draw calls: %d", 1+len(bunnies)/maxBatchElements), 320, 10)
-		DrawFPS(font, 10, 10)
+		fl.DrawText(font, fmt.Sprintf("batched draw calls: %d", 1+len(bunnies)/maxBatchElements), 320, 27.5)
+		DrawFPS(font, 10, 27.5)
 	}
 
 	fl.SetAnimationLoop(animate)

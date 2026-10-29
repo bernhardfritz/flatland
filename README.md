@@ -127,13 +127,36 @@ DWARF debug information is not included in production builds, so source-level de
 
 According to the [TinyGo documentation](https://tinygo.org/docs/reference/usage/misc-options/), debug symbol support currently covers line numbers only. Single-stepping and stack traces are supported, but inspecting variables is not.
 
+## Loading fonts
+
+Flatland accepts CSS font strings when loading fonts. For web applications, **WOFF2 is recommended** because it offers better compression and smaller file sizes compared to traditional TTF fonts.
+
+You can convert TrueType Font (TTF) files to WOFF2 using Google's [`woff2_compress`](https://github.com/google/woff2) converter.
+
+After conversion, place the resulting WOFF2 file in your application's `public/` directory and define it in `src/style.css`:
+
+```css
+@font-face {
+  font-family: "My Favorite Font";
+  src: url("myfont.woff2");
+}
+```
+
+Once registered, you can load it from `main.go` using:
+
+```go
+myFont := fl.loadFont("32px My Favorite Font")
+```
+
+For a complete working example, see [`./examples/custom-font/main.go`](./examples/custom-font/main.go).
+
 ## Features
 
 - 2D rendering with WebGL
 - Go → WebAssembly
 - Textures and texture regions
 - Filled rectangles
-- Monospaced text rendering
+- Text rendering
 - 2D transformations
 - Keyboard and mouse input
 - Frame-based animation with delta time
