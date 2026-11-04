@@ -105,6 +105,47 @@ func randomColor() color.RGBA {
 }
 ```
 
+## Loading textures
+
+Go allows you to embed individual files or entire directories directly into your binary. At runtime, these embedded files can be accessed through a virtual file system. Before loading textures, you must register this file system with Flatland using [AddFileSystem](https://pkg.go.dev/github.com/bernhardfritz/flatland#AddFileSystem):
+
+```go
+//go:embed resources/*
+var ASSETS embed.FS
+
+func init() {
+	fl.AddFileSystem(ASSETS)
+}
+
+func main() {
+	myTexture := fl.LoadTexture("resources/mytexture.png");
+```
+
+For a complete working example, see [`./examples/bouncing-dvd-logo/main.go`](./examples/bouncing-dvd-logo/main.go).
+
+## Loading fonts
+
+Flatland accepts CSS font strings when loading fonts. For web applications, **WOFF2 is recommended** because it offers better compression and smaller file sizes compared to traditional TTF fonts.
+
+You can convert TrueType Font (TTF) files to WOFF2 using Google's [`woff2_compress`](https://github.com/google/woff2) converter.
+
+After conversion, place the resulting WOFF2 file in your application's `public/` directory and define it in `src/style.css`:
+
+```css
+@font-face {
+  font-family: "My Favorite Font";
+  src: url("myfont.woff2");
+}
+```
+
+Once registered, you can load it from `main.go` using:
+
+```go
+myFont := fl.LoadFont("32px My Favorite Font")
+```
+
+For a complete working example, see [`./examples/custom-font/main.go`](./examples/custom-font/main.go).
+
 ## Debugging with Chrome DevTools
 
 TinyGo embeds DWARF debug information in WebAssembly (WASM) files during compilation. With the [C/C++ DevTools Support extension](https://chromewebstore.google.com/detail/cc++-devtools-support-dwa/pdcpmagijalfljmkmjngeonclgbbannb) for Chrome, you can use Chrome DevTools to set breakpoints, step through Go code, and view readable stack traces.
@@ -126,42 +167,6 @@ TinyGo embeds DWARF debug information in WebAssembly (WASM) files during compila
 DWARF debug information is not included in production builds, so source-level debugging with this extension is only available when running the development server.
 
 According to the [TinyGo documentation](https://tinygo.org/docs/reference/usage/misc-options/), debug symbol support currently covers line numbers only. Single-stepping and stack traces are supported, but inspecting variables is not.
-
-## Loading fonts
-
-Flatland accepts CSS font strings when loading fonts. For web applications, **WOFF2 is recommended** because it offers better compression and smaller file sizes compared to traditional TTF fonts.
-
-You can convert TrueType Font (TTF) files to WOFF2 using Google's [`woff2_compress`](https://github.com/google/woff2) converter.
-
-After conversion, place the resulting WOFF2 file in your application's `public/` directory and define it in `src/style.css`:
-
-```css
-@font-face {
-  font-family: "My Favorite Font";
-  src: url("myfont.woff2");
-}
-```
-
-Once registered, you can load it from `main.go` using:
-
-```go
-myFont := fl.loadFont("32px My Favorite Font")
-```
-
-For a complete working example, see [`./examples/custom-font/main.go`](./examples/custom-font/main.go).
-
-## Features
-
-- 2D rendering with WebGL
-- Go → WebAssembly
-- Textures and texture regions
-- Filled rectangles
-- Text rendering
-- 2D transformations
-- Keyboard and mouse input
-- Frame-based animation with delta time
-- Embedded asset support
-- Minimal API designed for Go developers
 
 ## API overview
 

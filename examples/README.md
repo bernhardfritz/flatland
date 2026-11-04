@@ -4,5 +4,6 @@
 - [Bouncing DVD logo](https://bernhardfritz.github.io/flatland/bouncing-dvd-logo)
 - [Bunnymark](https://bernhardfritz.github.io/flatland/bunnymark)
 - [Custom font](https://bernhardfritz.github.io/flatland/custom-font)
+- [Dual-grid system](https://bernhardfritz.github.io/flatland/dual-grid-system)
 - [Isometric cube](https://bernhardfritz.github.io/flatland/isometric-cube)
 - [Keyboard](https://bernhardfritz.github.io/flatland/keyboard)
