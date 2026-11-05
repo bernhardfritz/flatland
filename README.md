@@ -107,7 +107,7 @@ func randomColor() color.RGBA {
 
 ## Loading textures
 
-Go allows you to embed individual files or entire directories directly into your binary. At runtime, these embedded files can be accessed through a virtual file system. Before loading textures, you must register this file system with Flatland using [AddFileSystem](https://pkg.go.dev/github.com/bernhardfritz/flatland#AddFileSystem):
+Flatland supports loading textures from embedded files using Go's `embed` package. Textures must be in **PNG format**, as this is currently the only image format supported by Flatland.
 
 ```go
 //go:embed resources/*
@@ -125,7 +125,9 @@ For a complete working example, see [`./examples/bouncing-dvd-logo/main.go`](./e
 
 ## Loading fonts
 
-Flatland accepts CSS font strings when loading fonts. For web applications, **WOFF2 is recommended** because it offers better compression and smaller file sizes compared to traditional TTF fonts.
+Flatland accepts CSS font strings when loading fonts. You can use [web-safe fonts](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Text_styling/Fundamentals#web_safe_fonts) without providing any additional font files, as they are generally available across all systems.
+
+If you want to use a custom font, **WOFF2 is recommended** for web applications because it offers better compression and smaller file sizes compared to traditional TTF fonts.
 
 You can convert TrueType Font (TTF) files to WOFF2 using Google's [`woff2_compress`](https://github.com/google/woff2) converter.
 
